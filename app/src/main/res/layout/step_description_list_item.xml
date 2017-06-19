@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sixty"
+    android:background="@color/dark_blue2"
+    android:layout_margin="@dimen/five"
+    android:gravity="center"
+    >
+
+
+
+    <TextView
+        android:id="@+id/step_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/five"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        tools:text="1. "
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@+id/step_short_desc"
+        />
+
+
+    <TextView
+        android:id="@+id/step_short_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/five"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        tools:text="Steps short description here"
+        android:layout_gravity="center"
+
+        />
+
+
+
+</RelativeLayout>
