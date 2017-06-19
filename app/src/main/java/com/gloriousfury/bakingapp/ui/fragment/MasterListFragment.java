@@ -28,10 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gloriousfury.bakingapp.R;
 import com.gloriousfury.bakingapp.adapter.StepAdapter;
+import com.gloriousfury.bakingapp.model.Ingredient;
 import com.gloriousfury.bakingapp.model.Recipe;
 import com.gloriousfury.bakingapp.model.Step;
 import com.gloriousfury.bakingapp.service.ApiInterface;
@@ -57,14 +59,15 @@ public class MasterListFragment extends Fragment {
     RecyclerView stepRecyclerView;
     @BindView(R.id.layout_ingredients)
     LinearLayout ingredientView;
-
+    @BindView(R.id.txtview_ingredients)
+    TextView ingredients;
 
     StepAdapter adapter;
     ArrayList<Recipe> recipeArrayList = new ArrayList<>();
     Toast mCurrentToast;
     Recipe singleRecipe;
     ArrayList<Step> stepArrayList = new ArrayList<>();
-
+    ArrayList<Ingredient> ingredientArrayList = new ArrayList<>();
     String RECIPE_ITEM_KEY = "recipe_item";
 
     // OnImageClickListener interface, calls a method in the host activity named onImageSelected
@@ -110,11 +113,13 @@ public class MasterListFragment extends Fragment {
 //        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
 
-            Intent getRecipeData = getActivity().getIntent();
-        if(getRecipeData != null) {
+        Intent getRecipeData = getActivity().getIntent();
+        if (getRecipeData != null) {
 
             singleRecipe = getRecipeData.getParcelableExtra(RECIPE_ITEM_KEY);
             stepArrayList = singleRecipe.getSteps();
+            ingredientArrayList = singleRecipe.getIngredients();
+            ingredients.setText(getIngredientsString(ingredientArrayList));
 
         }
 
@@ -129,11 +134,24 @@ public class MasterListFragment extends Fragment {
         stepRecyclerView.setAdapter(adapter);
 
 
-
-
-
     }
 
+
+    String getIngredientsString(ArrayList<Ingredient> ingredients) {
+        String ingredientlist ;
+        StringBuilder sb = new StringBuilder();
+
+
+        for (int i = 0; i < ingredients.size() - 1; i++) {
+            String singleIngredient = ". " + ingredients.get(i).getIngredient() + "(" + ingredients.get(i).getQuantity() + " " +
+                    ingredients.get(i).getMeasure() +")"+ "\n";
+            sb.append(singleIngredient);
+        }
+
+        ingredientlist = sb.toString();
+
+        return ingredientlist;
+    }
 
     void showToast(String text) {
         if (mCurrentToast != null) {

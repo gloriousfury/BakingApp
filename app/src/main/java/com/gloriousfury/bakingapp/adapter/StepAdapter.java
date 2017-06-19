@@ -32,14 +32,15 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final TextView stepName,stepNo;
+        public final TextView stepName;
+
 
         public ViewHolder(View view) {
             super(view);
             view.setClickable(true);
             view.setOnClickListener(this);
            stepName = (TextView) view.findViewById(R.id.step_short_desc);
-            stepNo = (TextView) view.findViewById(R.id.step_no);
+//            stepNo = (TextView) view.findViewById(R.id.step_no);
 
         }
 
@@ -69,11 +70,11 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
+        int stepNo= position +1;
         String description = step_list.get(position).getShortDescription();
 
-        holder.stepName.setText(description);
-        holder.stepNo.setText(String.valueOf(position+1));
+        holder.stepName.setText(String.valueOf(stepNo)+ "." + " "+ description);
+//        holder.stepNo.setText(String.valueOf(position+1));
 
 //        Picasso.with(context).load(poster_img_path).into(holder.moviePoster);
 

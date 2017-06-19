@@ -8,22 +8,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/white"
         >
 
         <LinearLayout
             android:id="@+id/layout_ingredients"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/seventy"
+            android:layout_height="wrap_content"
             android:background="@color/twitter_blue"
             android:layout_margin="@dimen/ten"
+            android:orientation="vertical"
             >
             <TextView
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ingredients_label"
-                android:textSize="22sp"
+                android:textSize="14sp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/twenty"
+                android:layout_margin="@dimen/five"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/txtview_ingredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ingredients_label"
+                android:textSize="14sp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/five"
+                android:layout_marginBottom="@dimen/five"
+                android:layout_marginLeft="@dimen/five"
+                android:layout_marginRight="@dimen/five"
                 android:textColor="@color/white"
                 />
 
@@ -35,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/ten"
+            android:scrollbars="vertical"
             >
 
 
