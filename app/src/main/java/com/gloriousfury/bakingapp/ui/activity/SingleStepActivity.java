@@ -21,14 +21,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gloriousfury.bakingapp.R;
 import com.gloriousfury.bakingapp.model.Step;
 import com.gloriousfury.bakingapp.ui.fragment.VideoFragment;
+import com.gloriousfury.bakingapp.ui.fragment.VideoFragment2;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -41,9 +44,11 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.util.ArrayList;
+
 
 // This activity will display a custom Android image composed of three body parts: head, body, and legs
-public class SingleStepActivity extends AppCompatActivity {
+public class SingleStepActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     String VIDEO_URL_KEY = "video_url_key";
@@ -70,15 +75,12 @@ public class SingleStepActivity extends AppCompatActivity {
     public static final String CURRENT_WINDOW_INDEX = "current_window_index";
     public static final String PLAYBACK_POSITION = "playback_position";
 
-    // sample audio for testing exoplayer
-    public static final String NIGERIA_NATIONAL_ANTHEM_MP3 = "http://www.noiseaddicts.com/samples_1w72b820/4237.mp3";
-
-    // sample videos for testing exoplayer
-    public static final String VIDEO_1 = "http://techslides.com/demos/sample-videos/small.mp4";
-    public static final String VIDEO_2 = "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4";
     String videoUrl, getStepString;
-    TextView stepDescription;
-
+    TextView stepDescription, previousTextView, nextTextView;
+    ArrayList<Step> stepArrayList = new ArrayList<>();
+    int stepPosition;
+    RelativeLayout backView, previousView, nextView;
+    Step singleStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,45 +88,59 @@ public class SingleStepActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_step);
         mPlayerView = (SimpleExoPlayerView) findViewById(R.id.media_view);
         stepDescription = (TextView) findViewById(R.id.step_long_description);
+        backView = (RelativeLayout) findViewById(R.id.rl_back);
+        previousView = (RelativeLayout) findViewById(R.id.rl_previous_step);
+        nextTextView = (TextView) findViewById(R.id.tv_next_step);
+        previousTextView = (TextView) findViewById(R.id.tv_previous_step);
+        nextView = (RelativeLayout) findViewById(R.id.rl_next_step);
+        backView.setOnClickListener(this);
+        previousView.setOnClickListener(this);
+        nextView.setOnClickListener(this);
+
+
         // Only create new fragments when there is no previously saved state
         if (savedInstanceState == null) {
 
 
             Bundle getStepData = getIntent().getExtras().getBundle("StepBundle");
-            Step getSingleStep = getStepData.getParcelable(STEP_ITEM_KEY);
+            stepArrayList = getIntent().getExtras().getParcelableArrayList("StepArrayList");
+            stepPosition = getIntent().getIntExtra("StepPosition", 0);
+
+            singleStep = stepArrayList.get(stepPosition);
+            changeStepView(stepPosition);
             // Retrieve list index values that were sent through an intent; use them to display the desired Android-Me body part image
             // Use setListindex(int index) to set the list index for all BodyPartFragments
-            showToast(getSingleStep.getVideoURL());
+            showToast(String.valueOf(stepPosition));
 
             // Create a new head BodyPartFragment
-            VideoFragment videoFragment = new VideoFragment();
+            VideoFragment2 videoFragment = new VideoFragment2();
 
             // Set the list of image id's for the head fragment and set the position to the second image in the list
 //            headFragment.setImageIds(AndroidImageAssets.getHeads());
 //
 //            // Get the correct index to access in the array of head images from the intent
 //            // Set the default value to 0
-            videoUrl = getSingleStep.getVideoURL();
-//            headFragment.setListIndex(headIndex);
-            getStepString = getSingleStep.getDescription();
+//            videoUrl = singleStep.getVideoURL();
+////            headFragment.setListIndex(headIndex);
+//            getStepString = singleStep.getDescription();
+//
+//
+//            if (getStepString != null) {
+//                stepDescription.setText(getStepString);
+//
+//            }
+//
+//            if (videoUrl != null) {
+//                initializePlayer(videoUrl);
+//            }
 
-
-            if (getStepString != null) {
-                stepDescription.setText(getStepString);
-
-            }
-
-            if (videoUrl != null) {
-                initializePlayer(videoUrl);
-            }
-
-
-            // Add the fragment to its container using a FragmentManager and a Transaction
-            FragmentManager fragmentManager = getSupportFragmentManager();
-
-            fragmentManager.beginTransaction()
-                    .add(R.id.video_container, videoFragment)
-                    .commit();
+//
+//            // Add the fragment to its container using a FragmentManager and a Transaction
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//
+//            fragmentManager.beginTransaction()
+//                    .add(R.id.video_container, videoFragment)
+//                    .commit();
 
             // Create and display the body and leg BodyPartFragments
 
@@ -185,7 +201,7 @@ public class SingleStepActivity extends AppCompatActivity {
     * ExtractorMediaSource is suitable for playing regular files like (mp4, mp3, webm etc.)
     * This is appropriate for the baking app project, since all recipe videos are not in adaptive formats (i.e. HLS, Dash etc)
     */
-    private MediaSource buildMediaSource(Uri uri) {
+    public static MediaSource buildMediaSource(Uri uri) {
         DefaultExtractorsFactory extractorSourceFactory = new DefaultExtractorsFactory();
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("ua");
 
@@ -296,4 +312,80 @@ public class SingleStepActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+
+            case R.id.rl_back:
+
+                onBackPressed();
+                break;
+            case R.id.rl_next_step:
+
+                if (stepPosition >= 0 && stepPosition < stepArrayList.size() - 1) {
+                    stepPosition++;
+                    changeStepView(stepPosition);
+
+                }
+
+                break;
+
+            case R.id.rl_previous_step:
+
+                if (stepPosition >=0) {
+                    stepPosition--;
+                    changeStepView(stepPosition);
+
+                }else{
+
+
+
+                }
+
+
+                break;
+
+
+        }
+
+
+    }
+
+    public void changeStepView(int position) {
+
+        if (position == (stepArrayList.size() - 1)) {
+
+            nextTextView.setTextColor(ContextCompat.getColor(this, R.color.light_grey));
+
+
+
+        }else if(position == 0){
+
+            previousTextView.setTextColor(ContextCompat.getColor(this, R.color.light_grey));
+        }else{
+            nextTextView.setTextColor(ContextCompat.getColor(this, R.color.grey));
+            previousTextView.setTextColor(ContextCompat.getColor(this, R.color.grey));
+
+        }
+
+
+        singleStep = stepArrayList.get(position);
+
+        videoUrl = singleStep.getVideoURL();
+//            headFragment.setListIndex(headIndex);
+        getStepString = singleStep.getDescription();
+
+
+        if (getStepString != null) {
+            stepDescription.setText(getStepString);
+
+        }
+
+        if (videoUrl != null) {
+            initializePlayer(videoUrl);
+        }
+
+
+    }
 }

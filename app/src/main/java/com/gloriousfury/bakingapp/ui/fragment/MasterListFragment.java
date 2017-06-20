@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -117,6 +118,10 @@ public class MasterListFragment extends Fragment {
         if (getRecipeData != null) {
 
             singleRecipe = getRecipeData.getParcelableExtra(RECIPE_ITEM_KEY);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(singleRecipe.getName() +" Recipe");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
             stepArrayList = singleRecipe.getSteps();
             ingredientArrayList = singleRecipe.getIngredients();
             ingredients.setText(getIngredientsString(ingredientArrayList));

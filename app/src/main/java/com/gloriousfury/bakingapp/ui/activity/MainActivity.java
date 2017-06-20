@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     RecipeAdapter adapter;
     ArrayList<Recipe> recipeArrayList = new ArrayList<>();
     Toast mCurrentToast;
+    ProgressBar progressBar;
+    CoordinatorLayout coordinatorLayout;
+    Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +42,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinatorlayout);
         setUpViews();
-
-
-
 
 
     }
@@ -56,18 +57,17 @@ public class MainActivity extends AppCompatActivity {
         recipeRecyclerView.setHasFixedSize(true);
         LinearLayoutManager mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recipeRecyclerView.setLayoutManager(mlayoutManager);
-      ;
+        ;
         adapter = new RecipeAdapter(this, recipeArrayList);
         recipeRecyclerView.setAdapter(adapter);
         getRecipeList();
-        showToast("I am here now");
 
 
     }
 
     // method to get initial list of movies using the retrofit lib.
     public void getRecipeList() {
-       
+        initiateGetRecipeDataView();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -86,19 +86,18 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d("MainActivity", "loaded from API");
 
-                    showToast("I got the data, Yay!");
+                    showRecipeDataView();
                 } else {
 //                    showErrorMessage();
-
+                    showErrorMessage();
                     showToast("I didn't got the data,still Yay!");
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<Recipe>> call, Throwable t) {
-//                showErrorMessage();
+                showErrorMessage();
                 Log.d("TaiyeActivity", t.toString());
-                showToast("This is the failue method, I didn't got the data,still Yay!");
             }
         });
     }
@@ -110,6 +109,40 @@ public class MainActivity extends AppCompatActivity {
         mCurrentToast = Toast.makeText(this, text, Toast.LENGTH_LONG);
         mCurrentToast.show();
 
+    }
+
+
+    private void showRecipeDataView() {
+        /* First, make sure the error is invisible */
+
+        progressBar.setVisibility(View.INVISIBLE);
+        /* Then, make sure the weather data is visible */
+        recipeRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+
+    private void initiateGetRecipeDataView() {
+        /* First, make sure the error is invisible */
+
+        progressBar.setVisibility(View.VISIBLE);
+        /* Then, make sure the weather data is visible */
+        recipeRecyclerView.setVisibility(View.INVISIBLE);
+    }
+
+
+    private void showErrorMessage() {
+        /* First, hide the currently visible data */
+        progressBar.setVisibility(View.INVISIBLE);
+
+        /* Then, show the error */
+        snackbar = Snackbar.make(coordinatorLayout, "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("RETRY", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getRecipeList();
+            }
+        });
+        snackbar.show();
     }
 
 

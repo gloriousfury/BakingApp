@@ -1,6 +1,9 @@
 package com.gloriousfury.bakingapp.ui.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,19 +24,15 @@ import com.gloriousfury.bakingapp.model.Step;
 import com.gloriousfury.bakingapp.service.ApiInterface;
 import com.gloriousfury.bakingapp.ui.fragment.MasterListFragment;
 import com.gloriousfury.bakingapp.ui.fragment.VideoFragment;
+import com.gloriousfury.bakingapp.utils.RecipeContract;
+import com.gloriousfury.bakingapp.utils.RecipeDatabaseHelper;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SingleRecipeActivity extends AppCompatActivity implements MasterListFragment.OnDescriptionClickListener {
-
 
 
     @BindView(R.id.steps_recycler_view)
@@ -40,7 +40,7 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
     @BindView(R.id.layout_ingredients)
     LinearLayout ingredientView;
     private boolean mTwoPane;
-    
+
     StepAdapter adapter;
     ArrayList<Recipe> recipeArrayList = new ArrayList<>();
     Toast mCurrentToast;
@@ -48,23 +48,22 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
     ArrayList<Step> stepArrayList = new ArrayList<>();
 
     String RECIPE_ITEM_KEY = "recipe_item";
+    String STEP_ITEM_KEY = "step_item";
+    RecipeDatabaseHelper recipeDatabaseHelper;
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_recipe);
         ButterKnife.bind(this);
+        recipeDatabaseHelper = new RecipeDatabaseHelper(this);
 
 
-
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
+//
+//        getSupportActionBar().setTitle(singleRecipe.getName() +"Recipe");
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setUpViews(savedInstanceState);
-
-
-
 
 
     }
@@ -73,9 +72,21 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
         Intent getRecipeData = getIntent();
         singleRecipe = getRecipeData.getParcelableExtra(RECIPE_ITEM_KEY);
         stepArrayList = singleRecipe.getSteps();
+        ContentValues values = new ContentValues();
+        values.put(RecipeContract.RecipesEntry.COLUMN_NAME, singleRecipe.getName());
+        values.put(RecipeContract.RecipesEntry.COLUMN_INGREDIENT_LIST, singleRecipe.getIngredient_String());
+
+        if (recipeIsPresent()) {
+           recipeDatabaseHelper.updateRecipe(singleRecipe);
+//            recipeDatabaseHelper.addLastViewedRecipe(singleRecipe);
+        } else {
+            recipeDatabaseHelper.addLastViewedRecipe(singleRecipe);
+        }
+
+
 //        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        if(findViewById(R.id.single_step_linear_layout) != null) {
+        if (findViewById(R.id.single_step_linear_layout) != null) {
             // This LinearLayout will only initially exist in the two-pane tablet case
             mTwoPane = true;
 
@@ -89,33 +100,83 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
             adapter = new StepAdapter(this, stepArrayList);
             stepRecyclerView.setAdapter(adapter);
 
-                 if(savedInstanceState == null) {
-            // In two-pane mode, add initial BodyPartFragments to the screen
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (savedInstanceState == null) {
+                // In two-pane mode, add initial BodyPartFragments to the screen
+                FragmentManager fragmentManager = getSupportFragmentManager();
 
-            // Creating a new head fragment
-            VideoFragment singleStepFragment = new VideoFragment();
+                // Creating a new head fragment
+                VideoFragment singleStepFragment = new VideoFragment();
+                singleStepFragment.setStepData(stepArrayList.get(0));
 //            headFragment.setImageIds(AndroidImageAssets.getHeads());
-            // Add the fragment to its container using a transaction
-            fragmentManager.beginTransaction()
-                    .add(R.id.single_step_container, singleStepFragment)
-                    .commit();
+                // Add the fragment to its container using a transaction
+                fragmentManager.beginTransaction()
+                        .add(R.id.single_step_container, singleStepFragment)
+                        .commit();
 
+            }
+        } else {
+            // We're in single-pane mode and displaying fragments on a phone in separate activities
+            mTwoPane = false;
         }
-    } else {
-        // We're in single-pane mode and displaying fragments on a phone in separate activities
-        mTwoPane = false;
-    }
 
     }
 
 
     @Override
     public void onDescriptionSelected(Bundle stepParameters, int position) {
-        Toast.makeText(this, "Position clicked = " + position, Toast.LENGTH_SHORT).show();
-        Intent stepActivity = new Intent(this,SingleStepActivity.class);
-        stepActivity.putExtra("StepBundle",stepParameters);
-        startActivity(stepActivity);
 
+
+        if (mTwoPane) {
+
+            VideoFragment newFragment = new VideoFragment();
+            Step step = stepParameters.getParcelable(STEP_ITEM_KEY);
+            newFragment.setStepData(step);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.single_step_container, newFragment)
+                    .commit();
+
+        } else {
+
+            Toast.makeText(this, "Position clicked = " + position, Toast.LENGTH_SHORT).show();
+            Intent stepActivity = new Intent(this, SingleStepActivity.class);
+            stepActivity.putExtra("StepBundle", stepParameters);
+            stepActivity.putExtra("StepPosition", position);
+            stepActivity.putParcelableArrayListExtra("StepArrayList", stepArrayList);
+            startActivity(stepActivity);
+
+
+        }
+
+
+    }
+
+    private boolean recipeIsPresent() {
+        int cursorSize = recipeDatabaseHelper.cursorSize(0);
+        if (cursorSize == 0) {
+            Toast.makeText(this, "Recipe is not Stored, Cursor Size" + String.valueOf(cursorSize), Toast.LENGTH_LONG).show();
+
+            return false;
+
+        } else {
+          ;
+            Toast.makeText(this, "Movie is Stored" + String.valueOf(cursorSize), Toast.LENGTH_LONG).show();
+            return true;
+
+        }
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // API 5+ solution
+                onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

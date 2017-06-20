@@ -31,7 +31,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activity.SingleStepActivity"/>
+        <activity android:name=".ui.activity.SingleStepActivity"
+            android:theme="@style/AppTheme.Dialog"
+            />
 
         <activity android:name=".ui.activity.SingleRecipeActivity"/>
     </application>
