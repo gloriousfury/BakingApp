@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <!-- LinearLayout for holding three Android-Me images -->
+    <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+
+        android:layout_width="match_parent"
+        android:id="@+id/android_me_linear_layout"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+    >
+
+
+        <FrameLayout
+            android:id="@+id/video_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/two_hundred"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerInside"
+
+            >
+
+
+
+
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/media_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                />
+
+
+            <ImageView
+                android:id="@+id/img_video_error"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/video_not_available"
+                android:scaleType="fitXY"
+                android:visibility="invisible"
+                />
+
+
+        </FrameLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/step_long_description_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_blue2"
+
+            android:scaleType="centerInside">
+
+            <TextView
+                android:id="@+id/step_long_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/twenty"
+                android:textColor="@color/white"
+                android:textSize="@dimen/eighteen_sp"
+
+                />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fifty"
+                android:background="@color/app_white_smoke"
+                android:orientation="horizontal"
+                android:weightSum="90"
+                android:gravity="center_vertical"
+                android:baselineAligned="false"
+                android:layout_alignParentBottom="true"
+
+                >
+
+                <RelativeLayout
+                    android:id="@+id/rl_previous_step"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="30"
+
+                    >
+
+
+                    <TextView
+                        android:id="@+id/tv_previous_step"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/btn_previous"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/grey"
+
+
+                        />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/ten"
+                        android:layout_marginBottom="@dimen/ten"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:background="@color/grey"
+                        />
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/rl_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="30"
+
+
+                    >
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/btn_back"
+                        android:textColor="@color/grey"
+                        android:layout_centerInParent="true"
+
+                        />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/ten"
+                        android:layout_marginBottom="@dimen/ten"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:background="@color/grey"
+                        />
+
+                </RelativeLayout>
+
+
+
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="30"
+                    android:id="@+id/rl_next_step"
+                    >
+
+
+                    <TextView
+                        android:id="@+id/tv_next_step"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/btn_next"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/grey"
+
+
+                        />
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
+
+    </LinearLayout>

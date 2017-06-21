@@ -2,7 +2,6 @@ package com.gloriousfury.bakingapp.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,8 +14,11 @@ import android.widget.Toast;
 
 import com.gloriousfury.bakingapp.R;
 import com.gloriousfury.bakingapp.adapter.RecipeAdapter;
+import com.gloriousfury.bakingapp.adapter.RecipeAdapterTablet;
 import com.gloriousfury.bakingapp.model.Recipe;
 import com.gloriousfury.bakingapp.service.ApiInterface;
+import com.gloriousfury.bakingapp.utils.AutofitRecyclerView;
+import com.gloriousfury.bakingapp.utils.RecyclerInsetsDecoration;
 
 import java.util.ArrayList;
 
@@ -30,11 +32,14 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recipeRecyclerView;
     RecipeAdapter adapter;
+    RecipeAdapterTablet tablet_adapter;
     ArrayList<Recipe> recipeArrayList = new ArrayList<>();
     Toast mCurrentToast;
     ProgressBar progressBar;
     CoordinatorLayout coordinatorLayout;
     Snackbar snackbar;
+    private static final String LIFECYCLE_RECIPE_CALLBACKS_KEY = "recipesList";
+    private boolean tabletlayout= false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,22 +50,50 @@ public class MainActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_coordinatorlayout);
         setUpViews();
+        if (savedInstanceState == null || !savedInstanceState.containsKey(LIFECYCLE_RECIPE_CALLBACKS_KEY)){
 
+            getRecipeList();
+        }else{
+            recipeArrayList = savedInstanceState.getParcelableArrayList(LIFECYCLE_RECIPE_CALLBACKS_KEY);
+            adapter.setRecipeData(recipeArrayList);
+        }
+
+
+
+        setUpTabletViews();
+
+
+    }
+
+    private void setUpTabletViews() {
+
+
+      tablet_adapter  = new RecipeAdapterTablet(this, recipeArrayList);
+        recipeRecyclerView.addItemDecoration(new RecyclerInsetsDecoration(this));
+        recipeRecyclerView.setAdapter(tablet_adapter);
 
     }
 
     private void setUpViews() {
 
 //        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        recipeRecyclerView = (RecyclerView) findViewById(R.id.recipe_recycler);
+        recipeRecyclerView = (AutofitRecyclerView) findViewById(R.id.recipe_recycler);
         //recycler setup
-        recipeRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recipeRecyclerView.setLayoutManager(mlayoutManager);
-        ;
-        adapter = new RecipeAdapter(this, recipeArrayList);
-        recipeRecyclerView.setAdapter(adapter);
-        getRecipeList();
+
+
+        if(findViewById(R.id.tablet_layout_identifier)!=null){
+            tabletlayout = true;
+            tablet_adapter = new RecipeAdapterTablet(this, recipeArrayList);
+            recipeRecyclerView.setAdapter(adapter);
+
+        }else {
+            recipeRecyclerView.setHasFixedSize(true);
+            LinearLayoutManager mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            recipeRecyclerView.setLayoutManager(mlayoutManager);
+
+            adapter = new RecipeAdapter(this, recipeArrayList);
+            recipeRecyclerView.setAdapter(adapter);
+        }
 
 
     }
@@ -80,9 +113,17 @@ public class MainActivity extends AppCompatActivity {
 
                 if (response.isSuccessful()) {
 
-
                     recipeArrayList = response.body();
-                    adapter.setRecipeData(recipeArrayList);
+                    if(tabletlayout){
+                        tabletlayout = true;
+                        tablet_adapter.setRecipeData(recipeArrayList);
+
+                    }else {
+                        tabletlayout = false;
+                        adapter.setRecipeData(recipeArrayList);
+                    }
+
+
 
                     Log.d("MainActivity", "loaded from API");
 
@@ -101,6 +142,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(LIFECYCLE_RECIPE_CALLBACKS_KEY, recipeArrayList);
+        super.onSaveInstanceState(outState);
+    }
+
+
+
+
+
+
+
+
+
 
     void showToast(String text) {
         if (mCurrentToast != null) {

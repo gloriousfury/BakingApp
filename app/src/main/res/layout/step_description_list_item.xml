@@ -22,7 +22,7 @@
             android:id="@+id/img_steps_thumbnail"
             android:layout_width="@dimen/sixty"
             android:layout_height="match_parent"
-            android:src="@color/dark_blue2"/>
+            android:src="@drawable/step_background"/>
 
         <TextView
             android:id="@+id/step_short_desc"

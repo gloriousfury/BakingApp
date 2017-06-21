@@ -19,15 +19,12 @@ package com.gloriousfury.bakingapp.ui.fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.gloriousfury.bakingapp.R;
 import com.gloriousfury.bakingapp.model.Step;
@@ -41,10 +38,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.util.Util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class VideoFragment extends Fragment {
+public class SingleStepFragment2 extends Fragment {
 
     String VIDEO_URL_KEY = "video_url_key";
     Toast mCurrentToast;
@@ -83,7 +77,7 @@ public class VideoFragment extends Fragment {
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
      */
-    public VideoFragment() {
+    public SingleStepFragment2() {
     }
 
 

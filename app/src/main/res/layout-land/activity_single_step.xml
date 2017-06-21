@@ -3,26 +3,21 @@
     <!-- LinearLayout for holding three Android-Me images -->
     <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
 
-        android:layout_width="@dimen/three_fifty"
+        android:layout_width="match_parent"
         android:id="@+id/android_me_linear_layout"
-
-        android:layout_height="wrap_content"
+       android:layout_height="match_parent"
         android:background="@android:color/white"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-    >
+        android:orientation="vertical">
 
 
         <FrameLayout
             android:id="@+id/video_container"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/two_hundred"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:scaleType="centerInside"
 
             >
-
-
 
 
             <com.google.android.exoplayer2.ui.SimpleExoPlayerView
@@ -33,23 +28,13 @@
                 />
 
 
-            <ImageView
-                android:id="@+id/img_video_error"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/video_not_available"
-                android:scaleType="fitXY"
-                android:visibility="invisible"
-                />
-
-
         </FrameLayout>
 
 
         <LinearLayout
             android:id="@+id/step_long_description_container"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/two_hundred"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@color/dark_blue2"
 
             android:scaleType="centerInside">
@@ -69,8 +54,8 @@
 
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/fifty"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@color/app_white_smoke"
             android:orientation="horizontal"
             android:weightSum="90"

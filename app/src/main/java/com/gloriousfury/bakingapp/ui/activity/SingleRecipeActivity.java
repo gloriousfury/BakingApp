@@ -2,28 +2,22 @@ package com.gloriousfury.bakingapp.ui.activity;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
 import com.gloriousfury.bakingapp.R;
-import com.gloriousfury.bakingapp.adapter.RecipeAdapter;
 import com.gloriousfury.bakingapp.adapter.StepAdapter;
 import com.gloriousfury.bakingapp.model.Recipe;
 import com.gloriousfury.bakingapp.model.Step;
-import com.gloriousfury.bakingapp.service.ApiInterface;
 import com.gloriousfury.bakingapp.ui.fragment.MasterListFragment;
-import com.gloriousfury.bakingapp.ui.fragment.VideoFragment;
+import com.gloriousfury.bakingapp.ui.fragment.SingleStepFragment;
 import com.gloriousfury.bakingapp.utils.RecipeContract;
 import com.gloriousfury.bakingapp.utils.RecipeDatabaseHelper;
 
@@ -42,15 +36,14 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
     private boolean mTwoPane;
 
     StepAdapter adapter;
-    ArrayList<Recipe> recipeArrayList = new ArrayList<>();
-    Toast mCurrentToast;
+
     Recipe singleRecipe;
     ArrayList<Step> stepArrayList = new ArrayList<>();
 
     String RECIPE_ITEM_KEY = "recipe_item";
     String STEP_ITEM_KEY = "step_item";
     RecipeDatabaseHelper recipeDatabaseHelper;
-    SQLiteDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +82,12 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
         if (findViewById(R.id.single_step_linear_layout) != null) {
             // This LinearLayout will only initially exist in the two-pane tablet case
             mTwoPane = true;
+            String title = singleRecipe.getName();
+            if(title!=null) {
 
-            getSupportActionBar().setTitle(singleRecipe.getName());
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle(title);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
             //recycler setup
             stepRecyclerView.setHasFixedSize(true);
             LinearLayoutManager mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -105,7 +101,7 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
                 // Creating a new head fragment
-                VideoFragment singleStepFragment = new VideoFragment();
+                SingleStepFragment singleStepFragment = new SingleStepFragment();
                 singleStepFragment.setStepData(stepArrayList.get(0));
 //            headFragment.setImageIds(AndroidImageAssets.getHeads());
                 // Add the fragment to its container using a transaction
@@ -128,7 +124,7 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
 
         if (mTwoPane) {
 
-            VideoFragment newFragment = new VideoFragment();
+            SingleStepFragment newFragment = new SingleStepFragment();
             Step step = stepParameters.getParcelable(STEP_ITEM_KEY);
             newFragment.setStepData(step);
             getSupportFragmentManager().beginTransaction()
@@ -158,7 +154,6 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
             return false;
 
         } else {
-          ;
             Toast.makeText(this, "Movie is Stored" + String.valueOf(cursorSize), Toast.LENGTH_LONG).show();
             return true;
 

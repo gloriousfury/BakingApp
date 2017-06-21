@@ -8,6 +8,7 @@
     tools:context="com.gloriousfury.bakingapp.ui.activity.MainActivity">
 
     <LinearLayout
+        android:id="@+id/tablet_layout_identifier"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -30,7 +31,9 @@
         <com.gloriousfury.bakingapp.utils.AutofitRecyclerView
             android:id="@+id/recipe_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:columnWidth="@dimen/movie_item_width"
+            >
 
 
         </com.gloriousfury.bakingapp.utils.AutofitRecyclerView>

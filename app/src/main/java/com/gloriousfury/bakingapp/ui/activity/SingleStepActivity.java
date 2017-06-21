@@ -17,21 +17,22 @@
 package com.gloriousfury.bakingapp.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gloriousfury.bakingapp.R;
 import com.gloriousfury.bakingapp.model.Step;
-import com.gloriousfury.bakingapp.ui.fragment.VideoFragment;
-import com.gloriousfury.bakingapp.ui.fragment.VideoFragment2;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -47,13 +48,11 @@ import com.google.android.exoplayer2.util.Util;
 import java.util.ArrayList;
 
 
-// This activity will display a custom Android image composed of three body parts: head, body, and legs
+
 public class SingleStepActivity extends AppCompatActivity implements View.OnClickListener {
 
-
-    String VIDEO_URL_KEY = "video_url_key";
     Toast mCurrentToast;
-    String STEP_ITEM_KEY = "step_item";
+
 
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mPlayer;
@@ -62,8 +61,7 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
     private boolean autoPlay = false;
 
     // Track whether to display a two-pane or single-pane UI
-    // A single-pane display refers to phone screens, and two-pane to larger tablet screens
-    private boolean mTwoPane;
+    // A single-pane display refers to phone screens, and two-pane to larger tablet screen
 
 
     // used to remember the playback position
@@ -74,6 +72,7 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
     public static final String AUTOPLAY = "autoplay";
     public static final String CURRENT_WINDOW_INDEX = "current_window_index";
     public static final String PLAYBACK_POSITION = "playback_position";
+    public static final String LIFECYCLE_CALLBACK_VIDEO_URL= "video_url";
 
     String videoUrl, getStepString;
     TextView stepDescription, previousTextView, nextTextView;
@@ -81,12 +80,18 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
     int stepPosition;
     RelativeLayout backView, previousView, nextView;
     Step singleStep;
+    ImageView videoError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_step);
+
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+
         mPlayerView = (SimpleExoPlayerView) findViewById(R.id.media_view);
+        videoError = (ImageView) findViewById(R.id.img_video_error);
         stepDescription = (TextView) findViewById(R.id.step_long_description);
         backView = (RelativeLayout) findViewById(R.id.rl_back);
         previousView = (RelativeLayout) findViewById(R.id.rl_previous_step);
@@ -98,76 +103,28 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
         nextView.setOnClickListener(this);
 
 
+        stepArrayList = getIntent().getExtras().getParcelableArrayList("StepArrayList");
+        stepPosition = getIntent().getIntExtra("StepPosition", 0);
+
+        singleStep = stepArrayList.get(stepPosition);
+
+        // Retrieve list index values that were sent through an intent; use them to display the desired Android-Me body part image
+        // Use setListindex(int index) to set the list index for all BodyPartFragments
+        showToast(String.valueOf(stepPosition));
+
         // Only create new fragments when there is no previously saved state
-        if (savedInstanceState == null) {
-
-
-            Bundle getStepData = getIntent().getExtras().getBundle("StepBundle");
-            stepArrayList = getIntent().getExtras().getParcelableArrayList("StepArrayList");
-            stepPosition = getIntent().getIntExtra("StepPosition", 0);
-
-            singleStep = stepArrayList.get(stepPosition);
+        if (savedInstanceState == null|| !savedInstanceState.containsKey(LIFECYCLE_CALLBACK_VIDEO_URL)) {
             changeStepView(stepPosition);
-            // Retrieve list index values that were sent through an intent; use them to display the desired Android-Me body part image
-            // Use setListindex(int index) to set the list index for all BodyPartFragments
-            showToast(String.valueOf(stepPosition));
 
-            // Create a new head BodyPartFragment
-            VideoFragment2 videoFragment = new VideoFragment2();
 
-            // Set the list of image id's for the head fragment and set the position to the second image in the list
-//            headFragment.setImageIds(AndroidImageAssets.getHeads());
-//
-//            // Get the correct index to access in the array of head images from the intent
-//            // Set the default value to 0
-//            videoUrl = singleStep.getVideoURL();
-////            headFragment.setListIndex(headIndex);
-//            getStepString = singleStep.getDescription();
-//
-//
-//            if (getStepString != null) {
-//                stepDescription.setText(getStepString);
-//
-//            }
-//
-//            if (videoUrl != null) {
-//                initializePlayer(videoUrl);
-//            }
 
-//
-//            // Add the fragment to its container using a FragmentManager and a Transaction
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//            fragmentManager.beginTransaction()
-//                    .add(R.id.video_container, videoFragment)
-//                    .commit();
-
-            // Create and display the body and leg BodyPartFragments
-
-//            BodyPartFragment bodyFragment = new BodyPartFragment();
-//            bodyFragment.setImageIds(AndroidImageAssets.getBodies());
-//            int bodyIndex = getIntent().getIntExtra("bodyIndex", 0);
-//            bodyFragment.setListIndex(bodyIndex);
-//
-//            fragmentManager.beginTransaction()
-//                    .add(R.id.body_container, bodyFragment)
-//                    .commit();
-
-//            BodyPartFragment legFragment = new BodyPartFragment();
-//            legFragment.setImageIds(AndroidImageAssets.getLegs());
-//            int legIndex = getIntent().getIntExtra("legIndex", 0);
-//            legFragment.setListIndex(legIndex);
-//
-//            fragmentManager.beginTransaction()
-//                    .add(R.id.leg_container, legFragment)
-//                    .commit();
         } else {
 
-
+            changeStepView(stepPosition);
             playbackPosition = savedInstanceState.getLong(PLAYBACK_POSITION, 0);
             currentWindow = savedInstanceState.getInt(CURRENT_WINDOW_INDEX, 0);
             autoPlay = savedInstanceState.getBoolean(AUTOPLAY, false);
-
+            mPlayer.seekTo(currentWindow, playbackPosition);
 
         }
 
@@ -205,7 +162,7 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
         DefaultExtractorsFactory extractorSourceFactory = new DefaultExtractorsFactory();
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("ua");
 
-        ExtractorMediaSource audioSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorSourceFactory, null, null);
+//        ExtractorMediaSource audioSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorSourceFactory, null, null);
 
         // this return a single mediaSource object. i.e. no next, previous buttons to play next/prev media file
 //        return new ExtractorMediaSource(uri, dataSourceFactory, extractorSourceFactory, null, null);
@@ -239,6 +196,7 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
             outState.putLong(PLAYBACK_POSITION, playbackPosition);
             outState.putInt(CURRENT_WINDOW_INDEX, currentWindow);
             outState.putBoolean(AUTOPLAY, autoPlay);
+            outState.putString(LIFECYCLE_CALLBACK_VIDEO_URL, videoUrl);
         }
     }
 
@@ -337,14 +295,11 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
                     stepPosition--;
                     changeStepView(stepPosition);
 
-                }else{
-
-
-
                 }
 
-
                 break;
+
+            default:
 
 
         }
@@ -373,7 +328,6 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
         singleStep = stepArrayList.get(position);
 
         videoUrl = singleStep.getVideoURL();
-//            headFragment.setListIndex(headIndex);
         getStepString = singleStep.getDescription();
 
 
@@ -382,8 +336,14 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
 
         }
 
-        if (videoUrl != null) {
+        if ((!TextUtils.isEmpty(videoUrl))) {
+            videoError.setVisibility(View.INVISIBLE);
+            mPlayerView.setVisibility(View.VISIBLE);
             initializePlayer(videoUrl);
+        }else {
+            videoError.setVisibility(View.VISIBLE);
+            mPlayerView.setVisibility(View.INVISIBLE);
+
         }
 
 

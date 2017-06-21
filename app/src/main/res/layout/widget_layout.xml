@@ -1,39 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@color/twitter_blue"
     android:orientation="horizontal"
     android:padding="@dimen/five">
 
 
     <RelativeLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
         android:gravity="center"
 
         >
 
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="@dimen/fifty"
-            android:layout_height="@dimen/fifty"
-            android:layout_centerVertical="true"
-            android:layout_margin="@dimen/twenty"
-            android:src="@mipmap/ic_launcher" />
-
         <TextView
             android:id="@+id/app_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_toRightOf="@id/imageView"
-            android:text="@string/app_name"
+            android:text="@string/app_name_widgets"
             android:textSize="22sp"
             android:textColor="@color/white"
-
+            android:layout_margin="@dimen/five"
 
             />
 
@@ -41,12 +31,12 @@
             android:id="@+id/recipe_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/imageView"
-            android:layout_centerInParent="true"
-            android:text="Nutela Cream Pie"
+            android:layout_below="@id/app_label"
+            android:layout_alignParentLeft="true"
             android:textSize="@dimen/abc_text_size_large_material"
             android:textStyle="bold"
             android:textColor="@color/white"
+            android:layout_margin="@dimen/five"
             />
 
         <TextView
@@ -55,20 +45,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/recipe_name"
             android:layout_centerInParent="true"
-            android:text="Nutela Cream Pie"
             android:textSize="15sp"
             android:textColor="@color/white"
-            />
-
-        <Button
-            android:id="@+id/actionButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/recipe_ingredients"
-            android:text="Refresh"
-
+            android:layout_alignParentLeft="true"
+            android:layout_margin="@dimen/five"
 
             />
+
+
 
 
     </RelativeLayout>

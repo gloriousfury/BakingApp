@@ -11,7 +11,7 @@ import com.gloriousfury.bakingapp.R;
 import com.gloriousfury.bakingapp.model.Recipe;
 import com.gloriousfury.bakingapp.utils.RecipeDatabaseHelper;
 
-import java.util.Random;
+
 
 public class BakingWidgetProvider extends AppWidgetProvider {
 
@@ -28,15 +28,15 @@ public class BakingWidgetProvider extends AppWidgetProvider {
 
         for (int i = 0; i < count; i++) {
             int widgetId = appWidgetIds[i];
-            String number = String.format("%03d", (new Random().nextInt(900) + 100));
+
             String recipeName;
             String recipeIngredient;
             if(recipe!=null) {
              recipeName =   recipe.getName();
               recipeIngredient=   recipe.getIngredient_String();
             }else{
-                recipeName = "Recipe Name";
-                recipeIngredient = "No Last Viewed Recipe";
+                recipeName = context.getString(R.string.recipe_error_name);
+                recipeIngredient = context.getString(R.string.recipe_error_message);
 
             }
 
@@ -51,7 +51,7 @@ public class BakingWidgetProvider extends AppWidgetProvider {
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                     0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.actionButton, pendingIntent);
+//            remoteViews.setOnClickPendingIntent(R.id.actionButton, pendingIntent);
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }
