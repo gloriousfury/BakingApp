@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <!-- LinearLayout for holding three Android-Me images -->
+    <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+
+        android:layout_width="match_parent"
+        android:id="@+id/android_me_linear_layout"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+    >
+
+
+        <FrameLayout
+            android:id="@+id/video_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/two_hundred"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerInside"
+
+            >
+
+
+
+
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/media_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                />
+
+
+            <ImageView
+                android:id="@+id/img_video_error"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/video_not_available"
+                android:scaleType="fitXY"
+                android:visibility="invisible"
+                />
+
+
+        </FrameLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/step_long_description_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_blue2"
+
+            android:scaleType="centerInside">
+
+            <TextView
+                android:id="@+id/step_long_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/twenty"
+                android:textColor="@color/white"
+                android:textSize="@dimen/eighteen_sp"
+
+                />
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+    </LinearLayout>

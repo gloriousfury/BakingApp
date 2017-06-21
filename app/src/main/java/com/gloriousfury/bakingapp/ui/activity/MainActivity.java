@@ -114,14 +114,14 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
 
                     recipeArrayList = response.body();
-                    if(tabletlayout){
+//                    if(tabletlayout){
                         tabletlayout = true;
                         tablet_adapter.setRecipeData(recipeArrayList);
-
-                    }else {
-                        tabletlayout = false;
-                        adapter.setRecipeData(recipeArrayList);
-                    }
+//
+//                    }else {
+//                        tabletlayout = false;
+//                        adapter.setRecipeData(recipeArrayList);
+//                    }
 
 
 
