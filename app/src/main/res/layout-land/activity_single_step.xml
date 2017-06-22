@@ -26,7 +26,14 @@
                 android:layout_height="match_parent"
 
                 />
-
+            <ImageView
+                android:id="@+id/img_video_error"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/video_not_available"
+                android:scaleType="fitXY"
+                android:visibility="invisible"
+                />
 
         </FrameLayout>
 

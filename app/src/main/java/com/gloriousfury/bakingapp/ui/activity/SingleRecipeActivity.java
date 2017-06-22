@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
-import android.widget.Toast;
 
 import com.gloriousfury.bakingapp.R;
 import com.gloriousfury.bakingapp.adapter.StepAdapter;
@@ -133,7 +132,7 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
 
         } else {
 
-            Toast.makeText(this, "Position clicked = " + position, Toast.LENGTH_SHORT).show();
+
             Intent stepActivity = new Intent(this, SingleStepActivity.class);
             stepActivity.putExtra("StepBundle", stepParameters);
             stepActivity.putExtra("StepPosition", position);
@@ -149,13 +148,11 @@ public class SingleRecipeActivity extends AppCompatActivity implements MasterLis
     private boolean recipeIsPresent() {
         int cursorSize = recipeDatabaseHelper.cursorSize(0);
         if (cursorSize == 0) {
-            Toast.makeText(this, "Recipe is not Stored, Cursor Size" + String.valueOf(cursorSize), Toast.LENGTH_LONG).show();
 
             return false;
 
         } else {
-            Toast.makeText(this, "Movie is Stored" + String.valueOf(cursorSize), Toast.LENGTH_LONG).show();
-            return true;
+             return true;
 
         }
 

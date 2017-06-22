@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
 //                    showErrorMessage();
                     showErrorMessage();
-                    showToast("I didn't got the data,still Yay!");
                 }
             }
 

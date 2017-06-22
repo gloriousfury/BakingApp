@@ -110,7 +110,7 @@ public class SingleStepActivity extends AppCompatActivity implements View.OnClic
 
         // Retrieve list index values that were sent through an intent; use them to display the desired Android-Me body part image
         // Use setListindex(int index) to set the list index for all BodyPartFragments
-        showToast(String.valueOf(stepPosition));
+
 
         // Only create new fragments when there is no previously saved state
         if (savedInstanceState == null|| !savedInstanceState.containsKey(LIFECYCLE_CALLBACK_VIDEO_URL)) {
